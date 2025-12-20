@@ -1,0 +1,224 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+REPO_ROOT=$(CDPATH= cd -- "${SCRIPT_DIR}/.." && pwd)
+SKILLS_DIR="${REPO_ROOT}/skills"
+
+usage() {
+  cat <<'USAGE'
+Usage:
+  skill-sync install --user
+  skill-sync install --repo <path>
+  skill-sync install --codex-system
+  skill-sync list
+  skill-sync doctor [--repo <path>]
+
+Notes:
+  - Uses symlinks when possible; falls back to copies.
+  - --codex-system requires sudo; skipped if unavailable.
+USAGE
+}
+
+log() {
+  printf "%s\n" "$*"
+}
+
+die() {
+  printf "ERROR: %s\n" "$*" >&2
+  exit 1
+}
+
+collect_skills() {
+  local dir
+  SKILL_DIRS=()
+  shopt -s nullglob
+  for dir in "${SKILLS_DIR}"/*; do
+    if [[ -d "${dir}" && -f "${dir}/SKILL.md" ]]; then
+      SKILL_DIRS+=("${dir}")
+    fi
+  done
+  shopt -u nullglob
+}
+
+install_to_target() {
+  local target="$1"
+  local use_sudo="$2"
+  local dir name dest
+
+  collect_skills
+  if [[ ${#SKILL_DIRS[@]} -eq 0 ]]; then
+    log "No skills found in ${SKILLS_DIR}"
+    return 0
+  fi
+
+  if [[ "${use_sudo}" -eq 1 ]]; then
+    sudo mkdir -p "${target}"
+  else
+    mkdir -p "${target}"
+  fi
+
+  for dir in "${SKILL_DIRS[@]}"; do
+    name=$(basename "${dir}")
+    dest="${target}/${name}"
+    if [[ "${use_sudo}" -eq 1 ]]; then
+      sudo rm -rf "${dest}"
+      if sudo ln -s "${dir}" "${dest}" 2>/dev/null; then
+        log "linked ${name} -> ${target}"
+      else
+        sudo cp -R "${dir}" "${dest}"
+        log "copied ${name} -> ${target}"
+      fi
+    else
+      rm -rf "${dest}"
+      if ln -s "${dir}" "${dest}" 2>/dev/null; then
+        log "linked ${name} -> ${target}"
+      else
+        cp -R "${dir}" "${dest}"
+        log "copied ${name} -> ${target}"
+      fi
+    fi
+  done
+}
+
+list_repo_skills() {
+  collect_skills
+  if [[ ${#SKILL_DIRS[@]} -eq 0 ]]; then
+    log "No skills found in ${SKILLS_DIR}"
+    return 0
+  fi
+  local dir
+  for dir in "${SKILL_DIRS[@]}"; do
+    log "$(basename "${dir}")"
+  done
+}
+
+report_target() {
+  local label="$1"
+  local target="$2"
+  local entry name link_target
+
+  if [[ ! -d "${target}" ]]; then
+    log "${label}: ${target} (missing)"
+    return 0
+  fi
+
+  log "${label}: ${target}"
+  shopt -s nullglob
+  for entry in "${target}"/*; do
+    name=$(basename "${entry}")
+    if [[ -L "${entry}" ]]; then
+      link_target=$(readlink "${entry}")
+      log "  ${name} (symlink -> ${link_target})"
+    elif [[ -d "${entry}" ]]; then
+      log "  ${name} (copy)"
+    else
+      log "  ${name} (unknown)"
+    fi
+  done
+  shopt -u nullglob
+}
+
+require_repo() {
+  [[ -d "${SKILLS_DIR}" ]] || die "Missing skills directory at ${SKILLS_DIR}"
+}
+
+main() {
+  require_repo
+
+  if [[ $# -lt 1 ]]; then
+    usage
+    exit 1
+  fi
+
+  local cmd="$1"
+  shift
+
+  case "${cmd}" in
+    install)
+      local do_user=0
+      local do_repo=0
+      local repo_path=""
+      local do_codex_system=0
+
+      while [[ $# -gt 0 ]]; do
+        case "$1" in
+          --user)
+            do_user=1
+            shift
+            ;;
+          --repo)
+            do_repo=1
+            repo_path=${2:-""}
+            [[ -n "${repo_path}" ]] || die "--repo requires a path"
+            shift 2
+            ;;
+          --codex-system)
+            do_codex_system=1
+            shift
+            ;;
+          -h|--help)
+            usage
+            exit 0
+            ;;
+          *)
+            die "Unknown option: $1"
+            ;;
+        esac
+      done
+
+      if [[ "${do_user}" -eq 0 && "${do_repo}" -eq 0 && "${do_codex_system}" -eq 0 ]]; then
+        die "install requires --user, --repo <path>, or --codex-system"
+      fi
+
+      if [[ "${do_user}" -eq 1 ]]; then
+        install_to_target "${HOME}/.claude/skills" 0
+        install_to_target "${HOME}/.codex/skills" 0
+      fi
+
+      if [[ "${do_repo}" -eq 1 ]]; then
+        install_to_target "${repo_path}/.claude/skills" 0
+        install_to_target "${repo_path}/.codex/skills" 0
+      fi
+
+      if [[ "${do_codex_system}" -eq 1 ]]; then
+        if command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+          install_to_target "/etc/codex/skills" 1
+        else
+          log "Skipping /etc/codex/skills (sudo not available)"
+        fi
+      fi
+      ;;
+    list)
+      list_repo_skills
+      ;;
+    doctor)
+      local repo_path=""
+      if [[ $# -gt 0 ]]; then
+        if [[ "$1" == "--repo" ]]; then
+          repo_path=${2:-""}
+          [[ -n "${repo_path}" ]] || die "--repo requires a path"
+        else
+          die "Unknown option: $1"
+        fi
+      fi
+
+      log "Repository: ${REPO_ROOT}"
+      report_target "User (Claude)" "${HOME}/.claude/skills"
+      report_target "User (Codex)" "${HOME}/.codex/skills"
+      report_target "System (Codex)" "/etc/codex/skills"
+      if [[ -n "${repo_path}" ]]; then
+        report_target "Repo (Claude)" "${repo_path}/.claude/skills"
+        report_target "Repo (Codex)" "${repo_path}/.codex/skills"
+      fi
+      ;;
+    -h|--help)
+      usage
+      ;;
+    *)
+      die "Unknown command: ${cmd}"
+      ;;
+  esac
+}
+
+main "$@"
