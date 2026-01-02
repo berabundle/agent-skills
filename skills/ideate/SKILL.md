@@ -34,6 +34,12 @@ Turn a rough idea into a concrete plan, then execute with beads and a full test 
 - Report tests or checks run.
 - Provide a commit grouping suggestion without performing commits.
 
+## Related skills
+- `beads` - task tracking
+- `selfimprove` - execution loop
+- `consult-llm` - second opinion
+- `ck` - scan codebase quickly
+
 ## Smoke test
-- Verify `~/Projects/agent-skills/skills/ideate/SKILL.md` exists with YAML `name` and `description`.
-- Verify `~/Projects/agent-skills/skills/ideate/references/prompt-chain.md` exists.
+- Verify `~/Projects/berabundle/agent-skills/skills/ideate/SKILL.md` exists with YAML `name` and `description`.
+- Verify `~/Projects/berabundle/agent-skills/skills/ideate/references/prompt-chain.md` exists.

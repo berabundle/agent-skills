@@ -34,5 +34,8 @@ Manage source control with standard git commands while avoiding destructive oper
 - Report branch name and whether the working tree is clean.
 - Avoid destructive commands (for example, `reset --hard`) unless explicitly requested.
 
+## Related skills
+- `gh` - GitHub issues/PRs
+
 ## Smoke test
 - Run `git status` in a repo.

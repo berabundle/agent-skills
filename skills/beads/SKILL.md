@@ -41,6 +41,11 @@ Guides task tracking in Beads using the `bd` CLI with dependency-aware workflows
 - Confirm `bd sync` ran if issues were modified.
 - Keep outputs concise; use `--json` only if explicitly requested.
 
+## Related skills
+- `beadsviewer` - robot triage and planning
+- `ideate` - convert ideas into tracked tasks
+- `selfimprove` - execute tasks in a loop
+
 ## Smoke test
 - Run `bd status` in a repo with `.beads/`.
 - Run `bd ready` to ensure the CLI can read issues.

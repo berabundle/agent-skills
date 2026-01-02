@@ -314,6 +314,12 @@ await client.disconnect();
 EOF
 ```
 
+## Related skills
+- `web-iterate` - capture loop for UI iteration
+- `playwright` - raw automation and tests
+- `entr` - watch and repeat scripts
+- `frontend-design` - visual QA
+
 ## Smoke test
 - Start the server with `./server.sh &` and wait for the `Ready` message.
 - Run the basic template to visit `https://example.com` and print the page title.

@@ -27,5 +27,9 @@ Manage persistent terminal sessions with tmux.
 - `tmux attach -t work`.
 - `tmux kill-session -t work`.
 
+## Related skills
+- `dev-browser` - persistent browser server
+- `entr` - watch loops
+
 ## Smoke test
 - Run `tmux -V` and `tmux ls`.

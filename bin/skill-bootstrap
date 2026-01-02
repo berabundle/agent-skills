@@ -1,0 +1,136 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MODE="check"
+if [[ "${1:-}" == "--install" ]]; then
+  MODE="install"
+elif [[ "${1:-}" == "--list" ]]; then
+  MODE="list"
+fi
+
+have_cmd() { command -v "$1" >/dev/null 2>&1; }
+
+# Command -> package name mappings
+# Keep this list small and focused on skill-backed CLIs.
+PACMAN_PKGS=(
+  bat
+  ripgrep
+  fd
+  fzf
+  jq
+  curl
+  wget
+  lynx
+  pandoc
+  eza
+  entr
+  tree
+  tmux
+  git
+  github-cli
+  httpie
+  bun
+  uv
+  docker
+  openssh
+)
+
+APT_PKGS=(
+  bat
+  ripgrep
+  fd-find
+  fzf
+  jq
+  curl
+  wget
+  lynx
+  pandoc
+  eza
+  entr
+  tree
+  tmux
+  git
+  gh
+  httpie
+  docker.io
+  openssh-client
+)
+
+BREW_PKGS=(
+  bat
+  ripgrep
+  fd
+  fzf
+  jq
+  curl
+  wget
+  lynx
+  pandoc
+  eza
+  entr
+  tree
+  tmux
+  git
+  gh
+  httpie
+  bun
+  uv
+  docker
+)
+
+# Required commands to check (some map to different package names)
+REQUIRED_CMDS=(
+  bat rg fd fzf jq curl wget lynx pandoc eza entr tree tmux git gh http bun uv ck docker ssh
+)
+
+missing=()
+for c in "${REQUIRED_CMDS[@]}"; do
+  if ! have_cmd "$c"; then
+    missing+=("$c")
+  fi
+  if [[ "$MODE" == "list" ]]; then
+    printf '%s\n' "$c"
+  fi
+done
+
+if [[ "$MODE" == "list" ]]; then
+  exit 0
+fi
+
+if [[ ${#missing[@]} -eq 0 ]]; then
+  echo "All required commands are present."
+  exit 0
+fi
+
+echo "Missing commands: ${missing[*]}"
+
+if [[ "$MODE" == "check" ]]; then
+  echo "Run with --install to install via system package manager when possible."
+  exit 0
+fi
+
+# Install via package manager when available
+if have_cmd pacman; then
+  echo "Installing via pacman..."
+  sudo pacman -S --needed --noconfirm "${PACMAN_PKGS[@]}"
+elif have_cmd apt-get; then
+  echo "Installing via apt-get..."
+  sudo apt-get update -y
+  sudo apt-get install -y "${APT_PKGS[@]}"
+elif have_cmd brew; then
+  echo "Installing via brew..."
+  brew install "${BREW_PKGS[@]}"
+else
+  echo "No supported package manager found (pacman/apt/brew)."
+fi
+
+echo "\nManual installs (if still missing):"
+if ! have_cmd ck; then
+  echo "- ck: install from its repo or via cargo (e.g., cargo install ck-search)"
+fi
+if ! have_cmd bun; then
+  echo "- bun: https://bun.sh/docs/installation"
+fi
+if ! have_cmd uv; then
+  echo "- uv: use your distro package (preferred) or the official installer"
+fi

@@ -28,5 +28,9 @@ Automate browsers and run web tests with Playwright.
 - `playwright test`.
 - `playwright screenshot https://example.com shot.png`.
 
+## Related skills
+- `dev-browser` - persistent sessions
+- `web-iterate` - UI capture loop
+
 ## Smoke test
 - Run `playwright --version` and `playwright screenshot https://example.com /tmp/example.png`.

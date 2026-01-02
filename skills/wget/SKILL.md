@@ -28,5 +28,10 @@ Download files or mirror sites using wget.
 - `wget --mirror --convert-links --adjust-extension --no-parent https://example.com/docs/`.
 - `wget -c https://example.com/bigfile.bin`.
 
+## Related skills
+- `curl` - quick fetches
+- `lynx` - text dumps
+- `pandoc` - convert docs
+
 ## Smoke test
 - Run `wget -O - https://example.com | head -n 1`.

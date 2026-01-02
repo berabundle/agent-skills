@@ -28,5 +28,10 @@ Find files and directories with `fd` using regex or glob patterns.
 - `fd -t d "tests"` find directories.
 - `fd --glob "*.md" docs` glob search.
 
+## Related skills
+- `rg` - search contents after locating files
+- `fzf` - interactive selection
+- `entr` - watch file sets
+
 ## Smoke test
 - Run `fd --version` and `fd "README" .`.

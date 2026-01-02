@@ -28,5 +28,10 @@ Make HTTP requests and transfer files with curl.
 - `curl -sS -X POST -d '{"a":1}' URL`.
 - `curl -sS -o output.json URL`.
 
+## Related skills
+- `http` - readable API calls
+- `jq` - inspect JSON responses
+- `wget` - bulk downloads
+
 ## Smoke test
 - Run `curl -sS https://example.com | head -n 1`.

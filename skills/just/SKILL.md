@@ -28,5 +28,10 @@ Execute project tasks defined in a Justfile.
 - `just lint` run lint.
 - `just build` build artifacts.
 
+## Related skills
+- `bun` - JS task runner
+- `uv` - Python tasks
+- `ts-debug` - typecheck/lint/test loops
+
 ## Smoke test
 - Run `just --version` and `just --list` in a repo with a Justfile.

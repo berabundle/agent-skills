@@ -28,5 +28,9 @@ Make readable HTTP requests with HTTPie using the `http` command.
 - `http POST https://api.example.com name=alice role=admin`.
 - `http https://api.example.com search==term`.
 
+## Related skills
+- `curl` - fallback for complex flows
+- `jq` - JSON filtering
+
 ## Smoke test
 - Run `http :3000` against a local service or `http https://httpbin.org/get`.

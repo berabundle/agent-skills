@@ -28,5 +28,10 @@ Transform and query JSON using jq filters.
 - `jq -c '.items[]' file.json` stream items.
 - `echo '{"a":1}' | jq '.a'` from stdin.
 
+## Related skills
+- `curl` - parse API output
+- `http` - structured API calls
+- `ck` - process JSONL results
+
 ## Smoke test
 - Run `echo '{"a":1}' | jq '.a'`.

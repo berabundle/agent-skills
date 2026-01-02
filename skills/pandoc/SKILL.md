@@ -26,5 +26,9 @@ Convert documents between formats using pandoc.
 - `pandoc input.md -f gfm -t html -o output.html`.
 - `curl -sL URL | pandoc -f html -t gfm -o docs.md`.
 
+## Related skills
+- `lynx` - text dumps
+- `wget` - mirror sources
+
 ## Smoke test
 - Run `pandoc --version` and convert a small HTML file to Markdown.

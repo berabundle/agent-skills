@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+AGENT=""
+SKILLS=""
+TASK=""
+NOTES=""
+STATUS=""
+MISSING=""
+LOG_DIR="${HOME}/.local/share/agent-skills"
+LOG_FILE="${LOG_DIR}/skill-usage.jsonl"
+
+usage() {
+  cat <<'USAGE'
+Usage:
+  skill-log --agent <codex|claude> --skills "a,b" --task "summary" [--notes "..."] [--status success|blocked|partial] [--missing "a,b"]
+USAGE
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --agent)
+      AGENT="${2:-}"; shift 2 ;;
+    --skills)
+      SKILLS="${2:-}"; shift 2 ;;
+    --skill)
+      if [[ -z "$SKILLS" ]]; then SKILLS="${2:-}"; else SKILLS+=" , ${2:-}"; fi
+      shift 2 ;;
+    --task)
+      TASK="${2:-}"; shift 2 ;;
+    --notes)
+      NOTES="${2:-}"; shift 2 ;;
+    --status)
+      STATUS="${2:-}"; shift 2 ;;
+    --missing)
+      MISSING="${2:-}"; shift 2 ;;
+    -h|--help)
+      usage; exit 0 ;;
+    *)
+      echo "Unknown option: $1" >&2
+      usage; exit 1 ;;
+  esac
+done
+
+if [[ -z "$AGENT" || -z "$SKILLS" || -z "$TASK" ]]; then
+  usage
+  exit 1
+fi
+
+mkdir -p "$LOG_DIR"
+
+AGENT="$AGENT" SKILLS="$SKILLS" TASK="$TASK" NOTES="$NOTES" STATUS="$STATUS" MISSING="$MISSING" LOG_FILE="$LOG_FILE" \
+python - <<'PY'
+import json
+import os
+from datetime import datetime, timezone
+
+def split_list(value: str):
+    return [s.strip() for s in value.split(',') if s.strip()]
+
+record = {
+    "ts": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+    "agent": os.environ["AGENT"],
+    "skills": split_list(os.environ.get("SKILLS", "")),
+    "task": os.environ.get("TASK", ""),
+}
+
+notes = os.environ.get("NOTES", "").strip()
+status = os.environ.get("STATUS", "").strip()
+missing = split_list(os.environ.get("MISSING", ""))
+
+if notes:
+    record["notes"] = notes
+if status:
+    record["status"] = status
+if missing:
+    record["missing_skills"] = missing
+
+log_file = os.environ["LOG_FILE"]
+with open(log_file, "a", encoding="utf-8") as f:
+    f.write(json.dumps(record) + "\n")
+
+print(f"Logged skill usage to {log_file}")
+PY

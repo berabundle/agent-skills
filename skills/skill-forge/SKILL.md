@@ -7,6 +7,12 @@ metadata:
 
 Builds new skills from a local program or a GitHub repository using a consistent, minimal SKILL.md format.
 
+## Skill quality checklist
+- The description includes explicit trigger phrases (what should cause the skill to fire).
+- The workflow has at least one validation checkpoint (a MUST step when appropriate).
+- The skill links to 2-4 related skills in a `## Related skills` section.
+- Longer guidance is moved to `references/` and linked from the main file.
+
 ## When to use
 - You need to create a new skill and can inspect a local CLI (`--help`, `--version`, workflows).
 - You need to create a new skill from a GitHub repo (README, docs/, examples/, install scripts).
@@ -24,16 +30,20 @@ Builds new skills from a local program or a GitHub repository using a consistent
    - Local CLI: run `<tool> --help` and `<tool> --version` and capture core commands and flags.
    - GitHub repo: read `README.md`, `docs/`, `examples/`, and install scripts for workflows.
 3) Define the skill name (lowercase, numbers, hyphens only, <= 64 chars).
-4) Set `AGENT_SKILLS_ROOT` to the repo root (for example, `~/Projects/agent-skills`).
+4) Set `AGENT_SKILLS_ROOT` to the repo root (for example, `~/Projects/berabundle/agent-skills`).
 5) Create the folder at `$AGENT_SKILLS_ROOT/skills/<skill-name>`.
-5) Write `SKILL.md` with short top section, then details and a Smoke test section.
-6) Add optional `references/` files for longer docs and link to them from `SKILL.md`.
-7) Verify structure and that the skill explains inputs, steps, and outputs clearly.
+6) Write `SKILL.md` with a short top section, then details and a Smoke test section.
+7) Add a `## Related skills` section and include a brief reason for each link.
+8) Add a `## Validation checklist` (or equivalent) for workflows that can fail silently.
+9) Add optional `references/` files for longer docs and link to them from `SKILL.md`.
+10) Verify structure and that the skill explains inputs, steps, and outputs clearly.
 
 ## Output format requirements
 - Path: `$AGENT_SKILLS_ROOT/skills/<skill-name>/`.
 - Required file: `SKILL.md` with YAML frontmatter `name` + `description`.
 - Optional folders: `references/`, `scripts/`, `assets/`.
+- Include a `Validation checklist` section for complex workflows.
+- Include a `Related skills` section with short reasons.
 - Include a `Smoke test` section in `SKILL.md`.
 - Keep the top of `SKILL.md` short and use progressive disclosure via links.
 
@@ -57,6 +67,13 @@ One-line purpose of the skill.
 
 ## Output format requirements
 - ...
+
+## Validation checklist
+- ...
+
+## Related skills
+- `consult-llm` - second opinion on scope
+- `selfimprove` - periodic skill audits
 
 ## Smoke test
 - ...

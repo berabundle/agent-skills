@@ -50,6 +50,11 @@ See `references/frontend-aesthetics-prompts.md` for distilled and isolated promp
 - "Design a landing page for a fintech app with a bold editorial aesthetic."
 - "Build a dashboard UI for a logistics platform with a minimal industrial theme."
 
+## Related skills
+- `web-iterate` - capture rendered UI
+- `dev-browser` - screenshots and ARIA
+- `playwright` - UI tests
+
 ## Smoke test
 - Generate a single-page layout with a clearly stated aesthetic direction.
 - Verify typography, palette, motion, and background choices align with that direction.

@@ -24,5 +24,9 @@ Fetch text-only page dumps with lynx for quick inspection.
 - `lynx -dump https://example.com`.
 - `lynx -dump -nolist -nonumbers https://example.com > docs.txt`.
 
+## Related skills
+- `wget` - mirror docs
+- `pandoc` - convert dumps
+
 ## Smoke test
 - Run `lynx -dump https://example.com | head -n 5`.

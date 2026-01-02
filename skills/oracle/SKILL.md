@@ -19,8 +19,10 @@ Use the Oracle CLI to package a prompt plus file context for another model (API 
 - Model choice or multi-model list.
 
 ## Step-by-step method
-1) Ensure Oracle is installed: `npm install -g @steipete/oracle`.
-   - If not installed, use `npx -y @steipete/oracle` (do not use `pnpx`).
+1) Ensure Oracle is available:
+   - Prefer `bunx @steipete/oracle --help` (no global install).
+   - Or install globally with `bun add -g @steipete/oracle`.
+   - Fallback: `npx -y @steipete/oracle` (do not use `pnpx`).
 2) Run `oracle --help` once per session to confirm flags.
 3) Build the prompt with `-p/--prompt` and attach files with `-f/--file`.
 4) Choose engine:
@@ -42,6 +44,10 @@ Use the Oracle CLI to package a prompt plus file context for another model (API 
 - Use concise, explicit prompts.
 - Prefer `--render --copy` when automation is blocked.
 - Attach only relevant files to keep context focused.
+
+## Related skills
+- `consult-llm` - expert review loop
+- `ck` - narrow context first
 
 ## Smoke test
 - Run `oracle --render --copy -p "Summarize README" --file README.md` and confirm a bundle is printed.

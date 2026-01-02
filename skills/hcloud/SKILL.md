@@ -62,6 +62,10 @@ hcloud server delete <server-name-or-id>
 - List any commands executed and any required follow-ups.
 - Call out destructive actions explicitly.
 
+## Related skills
+- `tmux` - keep long-running sessions alive
+- `http` - API checks if needed
+
 ## Smoke test
 - Run `hcloud version` and `hcloud context list` to confirm CLI access.
 - Run `hcloud server-type list` to confirm API connectivity.

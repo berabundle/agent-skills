@@ -59,5 +59,9 @@ codex exec --sandbox read-only --skip-git-repo-check "$PROMPT"
 - "We keep getting a failing test in `src/api/client.ts`. Diagnose likely causes and propose fixes."
 - "Review this diff and tell me if there are concurrency risks."
 
+## Related skills
+- `oracle` - bundle files for external review
+- `selfimprove` - review chain
+
 ## Smoke test
 - Run a consult command with a short prompt (for example, "Analyze a failed unit test with a null pointer and propose next steps") and confirm the headings are present.

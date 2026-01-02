@@ -1,0 +1,95 @@
+#!/usr/bin/env python
+import argparse
+import json
+from collections import Counter, defaultdict
+from datetime import datetime, timezone
+from pathlib import Path
+
+DEFAULT_LOG = Path.home() / ".local" / "share" / "agent-skills" / "skill-usage.jsonl"
+
+parser = argparse.ArgumentParser(description="Summarize skill usage logs")
+parser.add_argument("--log", default=str(DEFAULT_LOG))
+parser.add_argument("--agent", default=None, help="Filter by agent (codex/claude)")
+parser.add_argument("--since-days", type=int, default=None, help="Only include entries from the last N days")
+parser.add_argument("--top", type=int, default=10, help="Number of top items to show")
+args = parser.parse_args()
+
+log_path = Path(args.log)
+if not log_path.exists():
+    print(f"No log file found at {log_path}")
+    raise SystemExit(1)
+
+since_ts = None
+if args.since_days is not None:
+    since_ts = datetime.now(timezone.utc).timestamp() - (args.since_days * 86400)
+
+entries = []
+with log_path.open("r", encoding="utf-8") as f:
+    for line in f:
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            rec = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if args.agent and rec.get("agent") != args.agent:
+            continue
+        if since_ts is not None:
+            try:
+                ts = datetime.fromisoformat(rec.get("ts", "")).timestamp()
+            except Exception:
+                continue
+            if ts < since_ts:
+                continue
+        entries.append(rec)
+
+if not entries:
+    print("No entries matched the filters.")
+    raise SystemExit(0)
+
+skills_counter = Counter()
+agent_counter = Counter()
+missing_counter = Counter()
+
+pair_counter = Counter()
+
+for rec in entries:
+    agent = rec.get("agent", "unknown")
+    agent_counter[agent] += 1
+    skills = rec.get("skills", [])
+    skills_counter.update(skills)
+
+    missing = rec.get("missing_skills", [])
+    missing_counter.update(missing)
+
+    unique = sorted(set(skills))
+    for i in range(len(unique)):
+        for j in range(i + 1, len(unique)):
+            pair_counter[(unique[i], unique[j])] += 1
+
+print(f"Entries: {len(entries)}")
+
+print("\nTop skills:")
+for skill, count in skills_counter.most_common(args.top):
+    print(f"  {skill:20} {count}")
+
+print("\nTop skills by agent:")
+for agent, count in agent_counter.most_common():
+    print(f"  {agent} ({count})")
+    agent_skills = Counter()
+    for rec in entries:
+        if rec.get("agent") != agent:
+            continue
+        agent_skills.update(rec.get("skills", []))
+    for skill, scount in agent_skills.most_common(min(args.top, 10)):
+        print(f"    {skill:18} {scount}")
+
+print("\nTop skill pairs (networking signal):")
+for (a, b), count in pair_counter.most_common(args.top):
+    print(f"  {a} + {b}: {count}")
+
+if missing_counter:
+    print("\nMissing/weak skills mentioned:")
+    for skill, count in missing_counter.most_common(args.top):
+        print(f"  {skill:20} {count}")

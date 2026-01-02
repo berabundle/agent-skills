@@ -18,8 +18,8 @@ Diagnose and fix TypeScript errors with a repeatable check → fix → re-check 
 
 ## Step-by-step method
 1) Read `AGENTS.md` and repo docs; honor local rules and tooling.
-2) Identify package manager and scripts in `package.json`.
-3) Run the smallest meaningful check to reproduce (prefer `npm|yarn|pnpm|bun run typecheck` or `tsc --noEmit`).
+2) Identify package manager and scripts in `package.json` (prefer Bun when available).
+3) Run the smallest meaningful check to reproduce (prefer `bun run typecheck` or `just typecheck`, then fallback to npm/yarn/pnpm or `tsc --noEmit`).
 4) Fix the root cause, keeping diffs tight.
 5) Re-run the smallest meaningful check after each fix.
 6) If lint/test errors remain, follow the same loop for those failures.
@@ -32,6 +32,10 @@ ls package-lock.json yarn.lock pnpm-lock.yaml bun.lockb 2>/dev/null
 
 Common scripts (prefer these when present):
 ```bash
+bun run typecheck
+bun run lint
+bun run test
+
 npm run typecheck
 npm run lint
 npm run test
@@ -39,6 +43,7 @@ npm run test
 
 Direct TypeScript check (fallback):
 ```bash
+bunx tsc --noEmit
 npx tsc --noEmit
 ```
 
@@ -47,8 +52,13 @@ npx tsc --noEmit
 - Describe the fix and why it resolves the error.
 - List checks run and their results.
 
+## Related skills
+- `bun` - preferred runner
+- `just` - project recipes
+- `rg` - locate errors
+
 ## Smoke test
-- Run `npx tsc --noEmit` in a TS repo and confirm errors are surfaced.
+- Run `bunx tsc --noEmit` in a TS repo and confirm errors are surfaced.
 
 ## References
 - See `references/ts-debug-workflow.md` for detailed triage patterns.

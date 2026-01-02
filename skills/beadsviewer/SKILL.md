@@ -39,5 +39,9 @@ bv --robot-plan
 bv --robot-next
 ```
 
+## Related skills
+- `beads` - task source of truth
+- `ideate` - planning flows
+
 ## Smoke test
 - Run `bv --robot-triage` in a repo with `.beads/` and verify JSON output.

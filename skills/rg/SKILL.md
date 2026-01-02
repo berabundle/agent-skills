@@ -28,5 +28,10 @@ Search files quickly using ripgrep with regex or literal matches.
 - `rg -g "*.md" "term"` limit by glob.
 - `rg --files -g "*.py"` list files.
 
+## Related skills
+- `fd` - limit file sets
+- `fzf` - interactive selection
+- `ck` - semantic search
+
 ## Smoke test
 - Run `rg --version` and `rg "TODO" .` in a repo.

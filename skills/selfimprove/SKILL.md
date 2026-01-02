@@ -54,6 +54,13 @@ claude --print --model sonnet --tools "" -- "$PROMPT"
 - Report tests or checks run.
 - Provide a commit grouping suggestion without performing commits.
 
+## Related skills
+- `beads` - task tracking
+- `beadsviewer` - triage
+- `consult-llm` - second opinion
+- `oracle` - external review
+- `ck` - codebase memory
+
 ## Smoke test
-- Verify `~/Projects/agent-skills/skills/selfimprove/SKILL.md` exists with YAML `name` and `description`.
-- Verify `~/Projects/agent-skills/skills/selfimprove/references/prompt-chain.md` exists.
+- Verify `~/Projects/berabundle/agent-skills/skills/selfimprove/SKILL.md` exists with YAML `name` and `description`.
+- Verify `~/Projects/berabundle/agent-skills/skills/selfimprove/references/prompt-chain.md` exists.

@@ -33,5 +33,9 @@ Operate GitHub from the CLI using `gh` for auth, repo, issue, and PR workflows.
 - Report created/updated issue or PR numbers.
 - Include links when available.
 
+## Related skills
+- `git` - local changes and history
+- `http` - API calls when gh is missing
+
 ## Smoke test
 - Run `gh --version` and `gh auth status`.
